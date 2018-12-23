@@ -12,6 +12,7 @@
                 "-g",
                 "-oerdsensor.out",
                 "-I${workspaceFolder}/inc/img",
+                "-I${workspaceFolder}/inc/math",
                 "src/*/*.cpp",
                 "src/*.cpp"
             ],

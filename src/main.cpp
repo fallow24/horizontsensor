@@ -14,10 +14,14 @@ int main()
     m(1,1) = 2;
     m(0,1) = 4;
     m.printMatrix();
-    Matrix p(3,2);
+    Matrix p(2,2);
+    p(0,0) = 1;
+    p(0,1) = 2;
+    p(1,0) = 3;
+    p(1,1) = 4;
     p.printMatrix();
 
-    Matrix a = m + p;
+    Matrix a = m * p;
 
     a.printMatrix();
 }

@@ -51,14 +51,15 @@ void Matrix::printMatrix() {
 
 //multiplication of matrices
 Matrix Matrix::operator*(Matrix m) {
-    if(this->column == m.row) throw invalid_argument("The number of columns of left matrix has to be equal to the number of rows of the right matrix!");
+    if(this->column != m.row) throw invalid_argument("The number of columns of left matrix has to be equal to the number of rows of the right matrix!");
 
     Matrix* result = new Matrix(this->row, m.column);
 
         for(int i = 0; i < result->row; i++)
             for(int j = 0; j < result->column; j++) {
                 double sum = 0;
-                for(int k = 0; k < m.row; k++) sum += (*result)(i,k) * (*result)(k,j);
+                for(int k = 0; k < m.row; k++) 
+                    sum += (*this)(i,k) * m(k,j);
                 (*result)(i,j) = sum;
             }
 
@@ -80,13 +81,13 @@ Matrix Matrix::operator+(Matrix m) {
 
 //for reading value from matrix
 double Matrix::operator() (int row, int column) const {
-    if(row <= 0 || row >= this->row || column <= 0 || column >= this->column) throw invalid_argument("const Matrix subscript out of bounds!");
+    if(row < 0 || row >= this->row || column < 0 || column >= this->column) throw invalid_argument("const Matrix subscript out of bounds!");
     return this->matrix[row * this->column + column];
 }
 
 //for changing value in matrix
 double& Matrix::operator() (int row, int column) {
-    if(row <= 0 || row >= this->row || column <= 0 || column >= this->column) throw invalid_argument("Matrix subscript out of bounds!");
+    if(row < 0 || row >= this->row || column < 0 || column >= this->column) throw invalid_argument("Matrix subscript out of bounds!");
     return this->matrix[row * this->column + column];
 }
 

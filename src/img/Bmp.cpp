@@ -1,5 +1,20 @@
-#include <stdio.h>
 #include "Bmp.h"
+
+/*
+ * dig = Binärisierung des Bildes
+ * erod = erodiertes Bild
+ */
+
+Bmp::Bmp(const char* filename) { 
+    this->filename = filename;
+    f = fopen(filename, "rb");
+    unsigned char info[54];
+    fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
+
+    // extract image height and width from header
+    width = *(int*)&info[18];
+    height = *(int*)&info[22];
+}
 
 unsigned char* Bmp::readRGB() {
     printf("Read .bmp file... ");
@@ -30,21 +45,20 @@ int* Bmp::grayscaleFromRGB(unsigned char* rgb) {//methode verkürzt und vereinfa
 }
 
 int* Bmp::digitalize(int* gray) {//methode verkürzt und vereinfacht LG Nils ;)
-    int* digitalImage = new int[width * height];
+    int* dig = new int[width * height];
 
     printf("Converting grayscale to binary...");
     fflush(stdout);
 
-    for(int i = 0; i < width * height; i++) gray[i] > THRESHOLD ? digitalImage[i] = 1 : digitalImage[i] = 0;   
+    for(int i = 0; i < width * height; i++) gray[i] > THRESHOLD ? dig[i] = 1 : dig[i] = 0;   
     
     printf(" done!\n");
     fflush(stdout);
 
-    return digitalImage;
+    return dig;
 }
 
-unsigned char Bmp::grayscale(unsigned char r, unsigned char g, unsigned char b) 
-{
+unsigned char Bmp::grayscale(unsigned char r, unsigned char g, unsigned char b) {
     unsigned char gray;
     
     //grayscale = 0,299 × red + 0,587 × green + 0,114 × blue
@@ -53,12 +67,63 @@ unsigned char Bmp::grayscale(unsigned char r, unsigned char g, unsigned char b)
     return gray;
 }
 
-int Bmp::getWidth()
-{
+int* Bmp::erodeBinaryPic(int* dig) {
+    //erode pic
+    int* erod = new int[width * height];
+
+    //fill border with 0
+    //top
+    for(int i = 0; i < height; i++) dig[i] = 0;
+    //bottom
+    for(int i = 0; i < height; i++) dig[width * (height-1) + i] = 0;
+    //left
+    for(int i = 0; i < height; i++) dig[i*width] = 0;
+    //right
+    for(int i = 0; i < height; i++) dig[i*width-1] = 0;
+
+    //iterate over picture with 3x3; a_ij is element in the middle
+    for(int i = width + 1; i < width * (height - 1) - 2; i++) {
+        int ones = 0;
+        if(dig[i - width - 1] == 1) ones++;
+        if(dig[i - width] == 1) ones++;
+        if(dig[i - width + 1] == 1) ones++;
+        if(dig[i - 1] == 1) ones++;
+        if(dig[i] == 1) ones++;
+        if(dig[i + 1] == 1) ones++;
+        if(dig[i + width - 1] == 1) ones++;
+        if(dig[i + width] == 1) ones++;
+        if(dig[i + width + 1] == 1) ones++;
+
+        ones <= m ? erod[i] = 0 : erod[i] = 1;      
+    }
+
+    return erod;
+}
+
+int* Bmp::buildEarthContour(int* dig, int* erod) {
+    int* diff = new int[width * height];
+
+    for(int i = 0; i < width * height; i++) diff[i] = dig[i] - erod[i];
+
+    return diff;
+}
+
+void Bmp::writeToTxt(int* pic) {
+    ofstream file;
+    file.open("pic.txt");
+
+    for(int i = 0; i < width * height; i++) {
+        if(i != 0 && i % width == 0) file << endl;
+        file << pic[i];
+    }
+
+    file.close();
+}
+
+int Bmp::getWidth() {
     return width;
 }
 
-int Bmp::getHeight()
-{
+int Bmp::getHeight() {
     return height;
 }

@@ -1,11 +1,17 @@
 #ifndef BMP_H
 #define BMP_H
+
 #include "stdio.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
+
 /*
  * grayscale value from 0 to 255
  * a star gets recognized if grayscale > THRESHOLD
  */
-#define THRESHOLD 15 //threshold for star recognizion
+#define THRESHOLD 5 //threshold for star recognizion
+#define m 8 //limit for number of ones in 3x3 element
 
 class Bmp
 {
@@ -13,23 +19,16 @@ class Bmp
         FILE* f;
         const char* filename;
         int width, height;
-        unsigned char grayscale(unsigned char r, unsigned char g, unsigned char b);
+        unsigned char grayscale(unsigned char, unsigned char, unsigned char);
 
     public:
-        Bmp(const char* filename) { 
-            this->filename = filename;
-            f = fopen(filename, "rb");
-            unsigned char info[54];
-            fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
-
-            // extract image height and width from header
-            width = *(int*)&info[18];
-            height = *(int*)&info[22];
-        }
-
+        Bmp(const char*);
         unsigned char* readRGB();
-        int* grayscaleFromRGB(unsigned char* rgb);
-        int* digitalize(int* gray);
+        int* grayscaleFromRGB(unsigned char*);
+        int* digitalize(int*);
+        int* erodeBinaryPic(int*);
+        int* buildEarthContour(int*, int*);
+        void writeToTxt(int*);
         int getWidth();
         int getHeight();
 

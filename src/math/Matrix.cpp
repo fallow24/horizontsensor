@@ -1,6 +1,4 @@
 #include "Matrix.h"
-#include <stdio.h>
-#include <stdexcept>
 using namespace std;
 
 //zero matrix with row rows and column columns

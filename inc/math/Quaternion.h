@@ -1,6 +1,8 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
+#include <stdio.h>
+
 class Quaternion {
     public:
         double q0, q1, q2, q3;

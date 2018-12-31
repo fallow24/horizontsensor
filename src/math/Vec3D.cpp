@@ -1,5 +1,4 @@
 #include "Vec3D.h"
-#include <math.h>
 
 Vec3D::Vec3D() {
     this->x = 0;

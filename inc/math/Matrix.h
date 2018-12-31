@@ -2,6 +2,8 @@
 #define MATRIX_H
 
 #include "Vec3D.h"
+#include <stdio.h>
+#include <stdexcept>
 
 class Matrix {
     private:
